@@ -45,39 +45,9 @@ Resources:
                 - "lambda.amazonaws.com"
             Action:
               - "sts:AssumeRole"
-      Policies:
-      - PolicyName: VPCTaggingLambdaRoleAssumePolicy
-        PolicyDocument:
-          Version: 2012-10-17
-          Statement:
-          - Effect: "Allow"
-            Action:
-              - "sts:AssumeRole"
-            Resource: 
-              - !Join ['', ['arn:aws:iam::', !Ref AWS::AccountId, ':role/VPCTaggingRole']]
       ManagedPolicyArns:
               - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-
-  VPCTaggingRole:
-    Type: AWS::IAM::Role
-    DependsOn:
-      - VPCTaggingLambdaRole
-    Properties:
-      RoleName: VPCTaggingRole
-      Description: Role used assumed by Lambda to execute tagging on VPC elements
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          -
-            Effect: "Allow"
-            Action:
-              - "sts:AssumeRole"
-            Principal:
-              AWS:
-                - !Join ['', ['arn:aws:iam::', !Ref AWS::AccountId, ':role/VPCTaggingLambdaRole']]
-      ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
-
+              
   VPCTaggingLambdaFunction:
     Type: "AWS::Lambda::Function"
     DependsOn:
