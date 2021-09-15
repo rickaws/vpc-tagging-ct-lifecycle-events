@@ -45,13 +45,21 @@ Resources:
                 - "lambda.amazonaws.com"
             Action:
               - "sts:AssumeRole"
+      Policies:
+      - PolicyName: VPCTaggingLambdaRoleAssumePolicy
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: "Allow"
+            Action:
+              - "sts:AssumeRole"
+            Resource: 
+              - "arn:aws:iam::*:role/AWSControlTowerExecution"
       ManagedPolicyArns:
               - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
               
   VPCTaggingLambdaFunction:
     Type: "AWS::Lambda::Function"
-    DependsOn:
-      - VPCTaggingLambdaRole
     Properties:
       FunctionName: !Sub ${AWS::AccountId}-ControlTowerLifeCycleEventLambda-AutomatedVPCTagging
       Description: VPCTagging - Function to handle incoming events and tag VPC resources inside new account
@@ -68,7 +76,6 @@ Resources:
   VPCTaggingTagHubRule:
     DependsOn:
       - VPCTaggingEventBus
-      - VPCTaggingLambdaFunction
     Type: AWS::Events::Rule
     Properties:
       Name: VPCTagging-HubRule
